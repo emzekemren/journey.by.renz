@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>♡</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: Arial, sans-serif;
+
+      background:
+        radial-gradient(circle at 20% 20%, #ffc9df, transparent 35%),
+        radial-gradient(circle at 80% 80%, #a9dfff, transparent 35%),
+        linear-gradient(135deg, #ffd6e7, #c8e9ff);
+    }
+
+    /* =========================
+       BACKGROUND BLOBS
+    ========================= */
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      z-index: 0;
+    }
+
+    .blob.one {
+      width: 220px;
+      height: 220px;
+      background: #ff9fc6;
+      top: -70px;
+      left: -50px;
+    }
+
+    .blob.two {
+      width: 260px;
+      height: 260px;
+      background: #82cfff;
+      bottom: -100px;
+      right: -60px;
+    }
+
+    /* =========================
+       CONTAINER
+    ========================= */
+
+    .scene {
+      position: relative;
+      z-index: 2;
+
+      width: 100%;
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* =========================
+       ENVELOPE
+    ========================= */
+
+    .envelope-wrapper {
+      width: 330px;
+      height: 230px;
+      position: relative;
+
+      cursor: pointer;
+
+      perspective: 1000px;
+    }
+
+    .envelope {
+      width: 100%;
+      height: 100%;
+
+      position: relative;
+
+      filter:
+        drop-shadow(0 20px 30px rgba(80, 100, 150, 0.2));
+
+      transition: transform 0.5s ease;
+    }
+
+    .envelope-wrapper:hover .envelope {
+      transform: translateY(-8px);
+    }
+
+    /* BODY */
+
+    .body-envelope {
+      position: absolute;
+
+      width: 100%;
+      height: 100%;
+
+      bottom: 0;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ffb8d4,
+          #f28eb8
+        );
+
+      border-radius: 8px;
+
+      overflow: hidden;
+
+      z-index: 2;
+    }
+
+    /* LEFT FOLD */
+
+    .fold-left {
+      position: absolute;
+
+      left: 0;
+      bottom: 0;
+
+      width: 0;
+      height: 0;
+
+      border-top: 115px solid transparent;
+      border-bottom: 115px solid transparent;
+      border-left: 165px solid #f69bc0;
+
+      z-index: 3;
+    }
+
+    /* RIGHT FOLD */
+
+    .fold-right {
+      position: absolute;
+
+      right: 0;
+      bottom: 0;
+
+      width: 0;
+      height: 0;
+
+      border-top: 115px solid transparent;
+      border-bottom: 115px solid transparent;
+      border-right: 165px solid #e985b1;
+
+      z-index: 3;
+    }
+
+    /* BOTTOM FOLD */
+
+    .fold-bottom {
+      position: absolute;
+
+      bottom: 0;
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      width: 0;
+      height: 0;
+
+      border-left: 165px solid transparent;
+      border-right: 165px solid transparent;
+      border-bottom: 120px solid #f5a5c7;
+
+      z-index: 4;
+    }
+
+    /* BLUE INNER */
+
+    .blue-inner {
+      position: absolute;
+
+      width: 92%;
+      height: 90%;
+
+      left: 4%;
+      top: 5%;
+
+      background:
+        linear-gradient(
+          145deg,
+          #d9f2ff,
+          #9edbfa
+        );
+
+      border-radius: 7px;
+
+      z-index: 1;
+
+      opacity: 0.9;
+    }
+
+    /* =========================
+       FLAP
+    ========================= */
+
+    .flap {
+      position: absolute;
+
+      top: 0;
+      left: 0;
+
+      width: 0;
+      height: 0;
+
+      border-left: 165px solid transparent;
+      border-right: 165px solid transparent;
+      border-top: 125px solid #ffcade;
+
+      transform-origin: top center;
+
+      z-index: 6;
+
+      transition:
+        transform 0.9s cubic-bezier(.2,.8,.2,1),
+        z-index 0.1s;
+    }
+
+    /* =========================
+       HEART
+    ========================= */
+
+    .seal {
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+
+      transform: translate(-50%, -50%);
+
+      width: 48px;
+      height: 48px;
+
+      background: linear-gradient(
+        135deg,
+        #ff6fa8,
+        #8ed5ff
+      );
+
+      border-radius: 50%;
+
+      z-index: 8;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: white;
+      font-size: 24px;
+
+      box-shadow:
+        0 8px 20px rgba(100, 130, 180, 0.25);
+
+      transition: 0.5s;
+    }
+
+    /* =========================
+       LETTER
+    ========================= */
+
+    .letter {
+      position: absolute;
+
+      width: 280px;
+      height: 180px;
+
+      left: 25px;
+      bottom: 15px;
+
+      background: #fffaff;
+
+      border-radius: 8px;
+
+      z-index: 1;
+
+      box-shadow:
+        0 10px 25px rgba(70, 100, 140, 0.15);
+
+      transition:
+        transform 1s ease,
+        z-index 0.1s;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .letter::before {
+      content: "";
+
+      width: 75%;
+      height: 2px;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        #f2a2c5,
+        transparent
+      );
+    }
+
+    /* =========================
+       OPEN STATE
+    ========================= */
+
+    .open .flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .open .letter {
+      transform: translateY(-135px);
+      z-index: 7;
+    }
+
+    .open .seal {
+      opacity: 0;
+      transform:
+        translate(-50%, -50%)
+        scale(0.5);
+    }
+
+    .open .envelope {
+      transform: translateY(15px);
+    }
+
+    /* =========================
+       HINT
+    ========================= */
+
+    .hint {
+      position: absolute;
+
+      bottom: 55px;
+
+      left: 50%;
+      transform: translateX(-50%);
+
+      color: rgba(90, 95, 130, 0.7);
+
+      font-size: 13px;
+
+      letter-spacing: 1px;
+
+      transition: opacity 0.5s;
+    }
+
+    .open + .hint {
+      opacity: 0;
+    }
+
+    /* =========================
+       CONTINUE BUTTON
+    ========================= */
+
+    .continue {
+      position: fixed;
+
+      bottom: 35px;
+
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      padding: 12px 25px;
+
+      border: none;
+
+      border-radius: 30px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #f279a8,
+          #77c8f5
+        );
+
+      color: white;
+
+      font-size: 14px;
+
+      cursor: pointer;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transition: 0.6s;
+
+      box-shadow:
+        0 8px 20px rgba(90, 150, 190, 0.25);
+    }
+
+    .continue.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 500px) {
+
+      .envelope-wrapper {
+        width: 300px;
+        height: 205px;
+      }
+
+      .fold-left {
+        border-top-width: 102px;
+        border-bottom-width: 102px;
+        border-left-width: 150px;
+      }
+
+      .fold-right {
+        border-top-width: 102px;
+        border-bottom-width: 102px;
+        border-right-width: 150px;
+      }
+
+      .fold-bottom {
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-bottom-width: 105px;
+      }
+
+      .flap {
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-top-width: 110px;
+      }
+
+      .letter {
+        width: 250px;
+        height: 160px;
+        left: 25px;
+      }
+
+      .open .letter {
+        transform: translateY(-120px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+
+  <div class="scene">
+
+    <div
+      class="envelope-wrapper"
+      id="envelopeWrapper"
+      onclick="openEnvelope()"
+    >
+
+      <div class="envelope">
+
+        <div class="blue-inner"></div>
+
+        <div class="body-envelope"></div>
+
+        <div class="fold-left"></div>
+
+        <div class="fold-right"></div>
+
+        <div class="fold-bottom"></div>
+
+        <div class="letter"></div>
+
+        <div class="flap"></div>
+
+        <div class="seal">
+          ♡
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="hint">
+      tap the envelope
+    </div>
+
+  </div>
+
+  <button
+    class="continue"
+    id="continueButton"
+    onclick="goToLetter()"
+  >
+    open ♡
+  </button>
+
+
+  <script>
+
+    function openEnvelope() {
+
+      const wrapper =
+        document.getElementById("envelopeWrapper");
+
+      const button =
+        document.getElementById("continueButton");
+
+      if (!wrapper.classList.contains("open")) {
+
+        wrapper.classList.add("open");
+
+        setTimeout(() => {
+          button.classList.add("show");
+        }, 1000);
+
+      }
+
+    }
+
+
+    function goToLetter() {
+
+      /*
+        https://emzekemren.github.io/leviosaa-/
+      */
+
+      window.location.href =
+        "https://emzekemren.github.io/leviosaa/";
+
+    }
+
+  </script>
+
+</body>
+  </html>
